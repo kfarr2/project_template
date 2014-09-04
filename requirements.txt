@@ -1,10 +1,11 @@
-Django
+Django==1.6.5
 PyMySQL
 coverage
 mock
 model-mommy
 pytz
 django-cloak
+django-perms
 setuptools
 -e git://github.com/PSU-OIT-ARC/django-bootstrap-form.git#egg=django-bootstrap-form
 -e git://github.com/PSU-OIT-ARC/django-arcutils.git#egg=django-arcutils

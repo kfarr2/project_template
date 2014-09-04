@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
-    <title>Quick Template</title>
+    <title>{{ project_name }}</title>
 
     <script src="{{ STATIC_URL }}js/jquery-1.11.0.min.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css" />
-    {% block head %}{% endblock %}
+    {% block head %}
+    {% endblock %}
 </head>
 <body>
     {% block body %}
+        {% load permissions %}
+
         {% if user.is_cloaked %}
             <div class="alert alert-danger" id="mask-alert">
                 <strong class="text-danger">You are masquerading as {{ user }}</strong>
@@ -22,34 +25,45 @@
             </div>
         {% endif %}
 
+        <div id="logged_in_as">
+            {% if user.is_authenticated %}
+                <p>logged in as <a href="{% url 'users-home' %}">{{ user }}</a></p>
+            {% endif %}
+        </div>
 
-        <div class="container {% if user.is_cloaked %}cloak-pushdown{% endif %}">
+
+        <div class="{% if user.is_cloaked %}cloak-pushdown{% endif %}" id="cloak_div">
+            <div id="header_image">
+                <div class="container">
+                    <a href="http://www.pdx.edu"><img src="http://www.pdx.edu/sites/all/themes/pdx_home/logo.png" alt="Home"></a>
+                </div>
+            </div>
             <nav class="navbar navbar-default">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="{% url 'home' %}">Project Name</a>
-                    </div>
-
-                    <ul class="nav navbar-nav">
-                        <li><a href="#">Link</a></li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
+                <div class="container">
+                    <div class="container-fluid">
+                        <div class="navbar-header">{{ project_name }}</div>
                         {% if user.is_authenticated %}
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> Account</a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="{% url 'users-edit' user.pk %}">Account</a></li>
-                                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                                </ul>
-                            </li>
-                        {% else %}
-                            <li><a href="{% url 'login' %}">Login</a></li>
+                        <ul class="nav navbar-nav">
+                            <li><a href="{% url 'users-workflow' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+                        </ul>
                         {% endif %}
-                    </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            {% if user.is_authenticated %}
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-th"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="{% url 'users-edit' user.pk %}"><span class="glyphicon glyphicon-user"></span> Account</a></li>
+                                        <li><a href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </div>
             </nav>
-
+            <hr id="header-rule" />
 
             {% if messages %}
                 {% for message in messages %}
@@ -57,7 +71,14 @@
                 {% endfor %}
             {% endif %}
 
-            {% block content %}{% endblock %}
+            <div class="container" id="content_container">
+                {% block content %}{% endblock %}
+            </div>    
+            <div class="footer">
+                <div class="container text-center text-muted">
+                    <h6>Designed and constructed by <a href="https://www.pdx.edu/arc">ARC</a></h6>
+                </div>
+            </div>    
         </div>
     {% endblock %}
 </body>
